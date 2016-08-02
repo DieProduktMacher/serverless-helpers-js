@@ -14,11 +14,11 @@ var CF = {
  */
 CF.loadVars = function () {
   // Build CF stack name
-  if ((!process.env.SERVERLESS_PROJECT_NAME || !process.env.SERVERLESS_STAGE || !process.env.SERVERLESS_REGION)) {
+  if ((!process.env.SERVERLESS_PROJECT || !process.env.SERVERLESS_STAGE || !process.env.SERVERLESS_REGION)) {
     return Promise.reject(new Error("Serverless environment not set"));
   }
 
-  var stackName = process.env.SERVERLESS_PROJECT_NAME + "-" + process.env.SERVERLESS_STAGE + "-r";
+  var stackName = process.env.SERVERLESS_PROJECT + "-" + process.env.SERVERLESS_STAGE + "-r";
   return CF._describeCFStack(stackName)
     .then(function(stackDescription) {
       if (!stackDescription.hasOwnProperty('Outputs') || stackDescription.Outputs.constructor !== Array) {
@@ -47,11 +47,11 @@ CF._describeCFStack = function(stackName) {
       if (err) {
         reject(err);
       }
-      
+
       if (!data || !data.Stacks || data.Stacks.constructor !== Array || data.Stacks.length === 0) {
         reject(new Error("invalid response", data));
       }
-      
+
       // Return only the stack description
       resolve(data.Stacks[0]);
     });
